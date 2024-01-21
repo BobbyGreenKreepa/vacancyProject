@@ -1,0 +1,61 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	    <link type="image/png" sizes="16x16" rel="icon" href="{% static 'application/img/favicon/16x16.png' %}">
+	    <link type="image/png" sizes="32x32" rel="icon" href="{% static 'application/img/favicon/32x32.png' %}">
+	    <link type="image/png" sizes="96x96" rel="icon" href="{% static 'application/img/favicon/96x96.png' %}">
+	    <link type="image/png" sizes="120x120" rel="icon" href="{% static 'application/img/favicon/120x120.png' %}">
+        <title>
+            {% block title %}
+            {% endblock %}
+        </title>
+        <link rel="stylesheet" href="{% static 'application/css/base.css' %}">
+    </head>
+    <body>
+    	<section class='logo'>
+    		<img src='{% static "application/img/logo.png" %}'>
+    		<p style="font-size: 40px; color: #FF8562;">Command</p>
+    	</section>
+    	<section class='link__list'>
+    		<a class='link' href='/'>Главная</a>
+    		<a class='link' href='/demand'>Востребованность</a>
+    		<a class='link' href='/geo'>География</a>
+    		<a class='link' href='/skills'>Ключевые навыки</a>
+    		<a class='link' href='/vacancies'>Последние вакансии</a>
+    	</section>
+    	<section>
+    		<div class='page__title'>
+    			<p style="font-size: 60px;">
+    				{% block page_title %}
+    				{% endblock %}
+    			</p>
+    			<img class='arrow' id='arrow' src='{% static "application/img/down_arrow.svg" %}'>
+    		</div>
+    		<div class='body' id='block'>
+		    	{% block body %}
+		    	{% endblock %}
+		    </div>
+    	</section>
+    	<script>
+    		const button = document.getElementById('arrow');
+			const form = document.getElementById('block');
+
+			button.addEventListener('click', e => {
+				console.log('1')
+				form.scrollIntoView({ 
+			    	block: 'start',
+			    	behavior: 'smooth',
+			  	});
+			});
+    	</script>
+    </body>
+    <footer>
+    	<p>Васильев Роман Андреевич</p>
+    	<p>РИ-220936</p>
+    </footer>
+</html>

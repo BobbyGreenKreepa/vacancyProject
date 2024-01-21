@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+	Главная
+{% endblock %}
+
+{% block page_title %}
+	Android разработчик
+{% endblock %}
+
+{% block body %}
+	{% for vacancy in data %}
+		<p class='block__name'>{{ vacancy.title }}</p>
+		<p class='block__text'>{{ vacancy.description }}</p>
+		{% if vacancy.image != null %}<img class='block__img' src="{{ vacancy.image.url }}">{% endif %}
+
+		<div class='breakline'></div>
+	{% endfor %}
+{% endblock %}
