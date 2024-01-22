@@ -124,14 +124,6 @@ footer {
 	margin: 20px 0;
 }
 
-table {
-  table-layout: auto;
-  width: 100%px;
-  margin: 6%;
-  padding: 3%;
-  border: 1px solid red;
-}
-
 .data-table {
   width: 100%;
   border-collapse: collapse;

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Последние вакансии
+{% endblock %}
+
+{% block page_title %}
+  Последние вакансии
+{% endblock %}
+
+{% block body %}
+  <table class='data-table' style='width: 100%; table-layout: fixed;'>
+    <colgroup>
+      <col style='width: 50%;'>
+      <col style='width: 50%;'>
+    </colgroup>
+    <tr>
+      {% for item in data %}
+        <td style="vertical-align: top; word-wrap: break-word;">
+          <p class='block__name'>{{ item.name }}</p>
+          <p class='block__name__2'>Описание</p>
+          <div class="block__description">
+            <p class='block__text block__text--full' style="display: none;">{{ item.desc }}</p>
+            <p class='block__text block__text--short'>{{ item.desc|truncatechars:270 }}</p>
+          </div>
+          <p class='block__name__2'>Ключевые навыки</p>
+          <p class='block__text'>{{ item.skills }}</p>
+          <p class='block__name__2'>Подробнее</p>
+          <p class='block__text'>Зарплата: {{ item.price }}</p>
+          <p class='block__text'>Дата публикации: {{ item.date_published }}</p>
+          <p class='block__text'>Локация: {{ item.region }}</p>
+        </td>
+        {% if forloop.counter|divisibleby:2 or forloop.last %}
+          </tr><tr> <!-- Закрываем текущую строку и начинаем новую -->
+        {% endif %}
+      {% endfor %}
+    </tr>
+  </table>
+{% endblock %}
