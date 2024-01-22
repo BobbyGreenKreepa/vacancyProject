@@ -23,10 +23,10 @@
     	</section>
     	<section class='link__list'>
     		<a class='link' href='/'>Главная</a>
-    		<a class='link' href='/demand'>Востребованность</a>
-    		<a class='link' href='/geo'>География</a>
-    		<a class='link' href='/skills'>Ключевые навыки</a>
-    		<a class='link' href='/vacancies'>Последние вакансии</a>
+    		<a class='link' href='/demand/'>Востребованность</a>
+    		<a class='link' href='/geo/'>География</a>
+    		<a class='link' href='/skills/'>Ключевые навыки</a>
+    		<a class='link' href='/vacancies/'>Последние вакансии</a>
     	</section>
     	<section>
     		<div class='page__title'>
@@ -47,11 +47,17 @@
 
 			button.addEventListener('click', e => {
 				console.log('1')
-				form.scrollIntoView({ 
+				form.scrollIntoView({
 			    	block: 'start',
 			    	behavior: 'smooth',
 			  	});
 			});
+
+			function toggleDescription(element) {
+      			var description = element.nextElementSibling;
+      			description.classList.toggle('expanded');
+      			console.log('toggle')
+    		}
     	</script>
     </body>
     <footer>

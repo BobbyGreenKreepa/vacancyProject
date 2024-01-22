@@ -126,3 +126,29 @@ table {
   border: 1px solid red;
 }
 
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table td {
+  border: 1px solid #dddddd;
+  padding: 8px;
+}
+
+.block__name_table {
+  font-weight: bold;
+}
+
+.block__name__2_table {
+  font-style: italic;
+}
+
+.block__text_table {
+  margin-bottom: 5px;
+}
+
+.block__block_table {
+  margin-top: 10px;
+}
+
