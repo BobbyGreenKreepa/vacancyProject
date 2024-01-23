@@ -3,6 +3,12 @@ import random
 import aiohttp
 
 from application.domain.GeoGraph import GeoGraph, GeoModelView
+from project import settings
+
+http_proxy = "http://10.10.1.10:3128"
+https_proxy = "https://10.10.1.11:1080"
+
+proxy = http_proxy if settings.DEBUG else https_proxy
 
 
 async def get_geo_model_view(graph: GeoGraph):
@@ -32,14 +38,12 @@ async def get_geo_model_view(graph: GeoGraph):
         return GeoModelView(
             data=graph_data,
             image_url=graph.image.url,
-            title=graph.title
+            title=graph.title,
         )
-    async with aiohttp.ClientSession() as session:
-        async with session.request(
-                method='post',
-                url=quickchart_url,
+    async with aiohttp.ClientSession(trust_env=True) as session:
+        async with session.post(
+                quickchart_url,
                 json=post_data,
-                headers={"Content-Type": "application/json"}
         ) as resp:
             response = await resp.json()
             if resp.status != 200:

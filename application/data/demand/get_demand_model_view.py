@@ -23,7 +23,7 @@ async def map_demand_to_demand_mv_task(graph: DemandGraph):
             image_url=graph.image.url,
             title=graph.title
         )
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(trust_env=True) as session:
         async with session.request(
                 method='post',
                 url=quickchart_url,
