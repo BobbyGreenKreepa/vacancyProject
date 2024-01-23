@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Ключевые навыки
+{% endblock %}
+
+{% block page_title %}
+  Ключевые навыки
+{% endblock %}
+
+{% block body %}
+<style>
+    .skills-year-table {
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+    overflow-x: auto;
+}
+
+caption {
+    font-size: 18px;
+}
+
+.skills-year-table th {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 5px;
+    background: #efefef;
+    border: 1px solid #dddddd;
+}
+
+.skills-year-table td {
+    font-size: 10px;
+    border: 1px solid #dddddd;
+    padding: 5px;
+}
+</style>
+  {% for demand in graphs %}
+        <caption>{{ demand.title }}</caption>
+    <img class="block_img" src="{{ demand.image_url }}" style="margin-top:5%;">
+        <div class="block" style="overflow-x:auto;">
+            <table class="skills-year-table" style="width: fit-content; margin: auto;">
+            <caption>{{ demand.title }}</caption>
+            <tr>
+                {% for key in demand.data.keys %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for value in demand.data.values %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+        </div>
+        <div class='breakline'></div>
+  {% endfor %}
+{% endblock %}

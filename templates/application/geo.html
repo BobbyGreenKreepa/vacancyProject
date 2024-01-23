@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+	География
+{% endblock %}
+
+{% block page_title %}
+	География
+{% endblock %}
+
+{% block body %}
+<style>
+    .demand-table {
+    align: center;
+    width: 100%;
+    margin-bottom: 20px;
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+}
+
+caption {
+    font-size: 18px;
+}
+
+.demand-table th {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px;
+    background: #efefef;
+    border: 1px solid #dddddd;
+}
+.demand-table td {
+    font-size: 16px;
+    border: 1px solid #dddddd;
+    padding: 5px;
+}
+</style>
+	{% for demand in graphs %}
+        <caption>{{ demand.title }}</caption>
+		<img class="block_img" src="{{ demand.image_url }}" style="margin-top:5%;">
+        <table class="demand-table">
+            <caption>{{ demand.title }}</caption>
+            <tr>
+                {% for key in demand.data.keys %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for value in demand.data.values %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+        <div class='breakline'></div>
+	{% endfor %}
+{% endblock %}
