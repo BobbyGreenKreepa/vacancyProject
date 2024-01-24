@@ -11,7 +11,6 @@ def get_rubles(currency: str, published_at: str):
     year = dttm.year
     month = dttm.month
 
-    # Обработка неправильных данных в файле
     if (year == 2016 and month <= 6 or year < 2016) and currency == "BYN":
         currency = "BYR"
     if (year == 2016 and month > 6 or year >= 2017) and currency == "BYR":

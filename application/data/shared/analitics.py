@@ -18,50 +18,80 @@ def get_data_frame(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def print_demand_data(df: pd.DataFrame):
+    print_salary_dynamics(df)
+    print_vacancies_dynamics(df)
+    print_profession_salary_dynamics(df)
+    print_profession_vacancies_dynamics(df)
+
+def print_salary_dynamics(df: pd.DataFrame):
     title = "Динамика уровня зарплат по годам"
-    salary_to_year = json.dumps(df.groupby("published_year")["salary"].mean().astype(int).to_dict())
-    print(f"{title}: {salary_to_year}")
+    salary_to_year = df.groupby("published_year")["salary"].mean().astype(int).to_dict()
+    print(f"{title}: {json.dumps(salary_to_year)}")
 
-    vacancies_dynamics = json.dumps(df['published_year'].value_counts().sort_index().astype(int).to_dict())
-    print(f"Динамика количества вакансий по годам: {vacancies_dynamics}")
+def print_vacancies_dynamics(df: pd.DataFrame):
+    vacancies_dynamics = df['published_year'].value_counts().sort_index().astype(int).to_dict()
+    print(f"Динамика количества вакансий по годам: {json.dumps(vacancies_dynamics)}")
 
+def print_profession_salary_dynamics(df: pd.DataFrame, profession_name: str):
     data_prof = df[df['name'].str.contains(profession_name, case=False, na=False)]
-    prof_salaries_dynamics = json.dumps(data_prof.groupby("published_year")["salary"].mean().astype(int).to_dict())
-    print(f"Динамика зарплат по годам для выбранной профессии: {prof_salaries_dynamics}")
+    prof_salaries_dynamics = data_prof.groupby("published_year")["salary"].mean().astype(int).to_dict()
+    print(f"Динамика зарплат по годам для выбранной профессии: {json.dumps(prof_salaries_dynamics)}")
 
-    # Доля вакансий по годам для выбранной профессии
-    prof_vacancies_dynamics = json.dumps(data_prof["published_year"].value_counts().sort_index().astype(int).to_dict())
-    print(f"Доля вакансий по годам для выбранной профессии {prof_vacancies_dynamics}")
+def print_profession_vacancies_dynamics(df: pd.DataFrame, profession_name: str):
+    data_prof = df[df['name'].str.contains(profession_name, case=False, na=False)]
+    prof_vacancies_dynamics = data_prof["published_year"].value_counts().sort_index().astype(int).to_dict()
+    print(f"Доля вакансий по годам для выбранной профессии {json.dumps(prof_vacancies_dynamics)}")
 
 
-def print_geography(df: pd.DataFrame):
+def calculate_filtered_cities(df: pd.DataFrame) -> pd.Series:
     total_vacancies = df.shape[0]
     min_vacancies_threshold = total_vacancies * 0.002
     filtered_cities = df['area_name'].value_counts()
     filtered_cities = filtered_cities[filtered_cities >= min_vacancies_threshold]
+    return filtered_cities
 
-    vacancies_by_area = df['area_name'].value_counts(normalize=True)
-    vacancies_by_area = vacancies_by_area[
-        vacancies_by_area.index.isin(filtered_cities.index)].to_dict()
+
+def print_vacancy_share_by_area(vacancies_by_area: dict):
     print(f"Доля вакансий по городам: {print_top_cities(vacancies_by_area)}")
 
-    data_prof = df[df['name'].str.contains(profession_name, case=False, na=False)]
-    prof_vacancies_by_area = data_prof['area_name'].value_counts(normalize=True)
-    prof_vacancies_by_area = prof_vacancies_by_area[
-        prof_vacancies_by_area.index.isin(filtered_cities.index)].to_dict()
+
+def print_vacancy_share_by_area_for_profession(prof_vacancies_by_area: dict):
     print(f"Доля вакансий по городам для выбранной профессии: {print_top_cities(prof_vacancies_by_area)}")
 
+
+def calculate_salaries_by_area(df: pd.DataFrame, filtered_cities: pd.Series) -> dict:
     df = df.dropna(subset=["salary"])
-    data_prof = data_prof.dropna(subset=["salary"])
     salaries_by_area = df.groupby('area_name')['salary'].mean().astype(int)
-    salaries_by_area = salaries_by_area[
-        salaries_by_area.index.isin(filtered_cities.index)].sort_values(ascending=False).to_dict()
+    salaries_by_area = salaries_by_area[salaries_by_area.index.isin(filtered_cities.index)].sort_values(ascending=False).to_dict()
+    return salaries_by_area
+
+
+def print_salaries_by_area(salaries_by_area: dict):
     print(f"Уровень зарплат по городам: {get_top_cities_by_salary(salaries_by_area)}")
 
-    prof_salaries_by_area = data_prof.groupby('area_name')['salary'].mean().astype(int)
-    prof_salaries_by_area = prof_salaries_by_area[
-        prof_salaries_by_area.index.isin(filtered_cities.index)].sort_values(ascending=False).to_dict()
+
+def print_salaries_by_area_for_profession(prof_salaries_by_area: dict):
     print(f"Уровень зарплат по городам для выбранной профессии {get_top_cities_by_salary(prof_salaries_by_area)}")
+
+
+def print_geography(df: pd.DataFrame, profession_name: str = None):
+    filtered_cities = calculate_filtered_cities(df)
+    vacancies_by_area = df['area_name'].value_counts(normalize=True)
+    vacancies_by_area = vacancies_by_area[vacancies_by_area.index.isin(filtered_cities.index)].to_dict()
+    print_vacancy_share_by_area(vacancies_by_area)
+
+    if profession_name:
+        data_prof = df[df['name'].str.contains(profession_name, case=False, na=False)]
+        prof_vacancies_by_area = data_prof['area_name'].value_counts(normalize=True)
+        prof_vacancies_by_area = prof_vacancies_by_area[prof_vacancies_by_area.index.isin(filtered_cities.index)].to_dict()
+        print_vacancy_share_by_area_for_profession(prof_vacancies_by_area)
+
+        salaries_by_area = calculate_salaries_by_area(df, filtered_cities)
+        print_salaries_by_area(salaries_by_area)
+
+        prof_salaries_by_area = calculate_salaries_by_area(data_prof, filtered_cities)
+        print_salaries_by_area_for_profession(prof_salaries_by_area)
+
 
 
 def print_skills(df: pd.DataFrame):
@@ -70,7 +100,8 @@ def print_skills(df: pd.DataFrame):
         name="frequency")
 
     top_skills = (
-        skills_freq.groupby("published_year")
+        skills_freq
+        .groupby("published_year")
         .apply(lambda x: x.nlargest(20, "frequency"))
         .reset_index(drop=True)
     )
@@ -81,7 +112,6 @@ def print_skills(df: pd.DataFrame):
         array = skills_frequency_by_year[skill_by_year]
         dict = {x: y for x, y in zip(array[0], array[1])}
         print(f"{skill_by_year}: {json.dumps(dict, ensure_ascii=False).encode('utf-8').decode()}")
-
 
 
 def print_top_cities(cities: dict) -> dict:
