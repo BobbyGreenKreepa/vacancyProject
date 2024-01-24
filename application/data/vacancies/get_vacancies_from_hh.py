@@ -1,13 +1,19 @@
+import asyncio
+
+import aiohttp
 import requests
-from datetime import timedelta, datetime
 import re
 
 
-def get_vacancy_details(vacancy_id: str):
-    resp = requests.get(f'https://api.hh.ru/vacancies/{vacancy_id}')
-    return resp.json()
+async def get_vacancy_details(vacancy_id: str):
+    async with aiohttp.ClientSession(trust_env=True) as session:
+        async with session.get(f'https://api.hh.ru/vacancies/{vacancy_id}') as resp:
+            json = await resp.json()
+            return json
 
 
+
+#Функция не асинхронна т.к вызывается 1 раз
 def get_vacancies():
     params = {
         'text': 'android',
@@ -24,13 +30,27 @@ def empty():
     return 'Не указано'
 
 
-def load_vacancies_from_hh():
-    vacancies_list = []
+async def load_vacancy_info():
     counter = 0
-    for vacancy in get_vacancies()['items']:
+
+    remote_vacancies = get_vacancies()['items']
+
+    tasks = []
+
+    for vacancy in remote_vacancies:
         if counter == 10:
             break
-        data = get_vacancy_details(vacancy['id'])
+        tasks.append(get_vacancy_details(vacancy['id']))
+        counter += 1
+
+    detailed_vacancy = await asyncio.gather(*tasks)
+    return detailed_vacancy
+
+
+async def load_vacancies_from_hh():
+    vacancies_list = []
+
+    for data in await load_vacancy_info():
         name = data['name']
 
         skills = ''
@@ -74,7 +94,6 @@ def load_vacancies_from_hh():
                 'date_published': date_published
             }
         )
-        counter += 1
     return vacancies_list
 
 

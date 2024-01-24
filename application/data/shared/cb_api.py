@@ -3,8 +3,7 @@ import dateutil.parser
 import xml.etree.ElementTree as ET
 
 
-# API Центробанка
-def get_currency_in_rur(currency: str, published_at: str):
+def get_rubles(currency: str, published_at: str):
     if currency == "RUR":
         return 1.0
 
@@ -37,12 +36,16 @@ def get_currency_in_rur(currency: str, published_at: str):
     return currencies_by_date[year][month][currency]
 
 
+def make_request(date):
+    url = f"http://www.cbr.ru/scripts/XML_daily.asp?date_req={date}"
+    return requests.get(url)
+
+
 def get_currency_from_cb(currency: str, month: int, year: int):
     print(currency, month, year)
     month = "0" + str(month) if month < 10 else month
     date = f"01/{month}/{year}"
-    url = f"http://www.cbr.ru/scripts/XML_daily.asp?date_req={date}"
-    response = requests.get(url)
+    response = make_request(date)
 
     if response.status_code == 200:
         root = ET.fromstring(response.content)

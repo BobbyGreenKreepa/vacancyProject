@@ -3,21 +3,21 @@ import json
 import numpy as np
 import pandas as pd
 
-from cb_api import get_currency_in_rur
+from cb_api import get_rubles
 
 
-def prepare_df(df: pd.DataFrame) -> pd.DataFrame:
+def get_data_frame(df: pd.DataFrame) -> pd.DataFrame:
     df["salary"] = df[['salary_from', 'salary_to']].mean(axis=1)
     df["salary"] = df.apply(
         lambda row: np.nan if pd.isnull(row["salary_currency"]) else
-        row["salary"] * get_currency_in_rur(str(row["salary_currency"]), str(row["published_at"])), axis=1
+        row["salary"] * get_rubles(str(row["salary_currency"]), str(row["published_at"])), axis=1
     )
     df = df.drop(df[df["salary"] >= 10000000.0].index)
     df["published_year"] = pd.to_datetime(df["published_at"], utc=True).dt.year
     return df
 
 
-def get_demand_page_content(df: pd.DataFrame):
+def print_demand_data(df: pd.DataFrame):
     title = "Динамика уровня зарплат по годам"
     salary_to_year = json.dumps(df.groupby("published_year")["salary"].mean().astype(int).to_dict())
     print(f"{title}: {salary_to_year}")
