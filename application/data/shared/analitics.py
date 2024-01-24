@@ -3,14 +3,15 @@ import json
 import numpy as np
 import pandas as pd
 
-from cb_api import get_rubles
+from CentralBankService import CentralBankService
 
 
 def get_data_frame(df: pd.DataFrame) -> pd.DataFrame:
+    central_bank_service = CentralBankService()
     df["salary"] = df[['salary_from', 'salary_to']].mean(axis=1)
     df["salary"] = df.apply(
         lambda row: np.nan if pd.isnull(row["salary_currency"]) else
-        row["salary"] * get_rubles(str(row["salary_currency"]), str(row["published_at"])), axis=1
+        row["salary"] * central_bank_service.get_rubles(str(row["salary_currency"]), str(row["published_at"])), axis=1
     )
     df = df.drop(df[df["salary"] >= 10000000.0].index)
     df["published_year"] = pd.to_datetime(df["published_at"], utc=True).dt.year
